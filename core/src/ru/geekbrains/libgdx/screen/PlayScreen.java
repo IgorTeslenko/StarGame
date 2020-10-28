@@ -1,39 +1,35 @@
 package ru.geekbrains.libgdx.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.libgdx.base.BaseScreen;
+import ru.geekbrains.libgdx.controls.GoLeftButton;
 import ru.geekbrains.libgdx.math.Rect;
 import ru.geekbrains.libgdx.sprite.Background;
-import ru.geekbrains.libgdx.sprite.ExitButton;
-import ru.geekbrains.libgdx.sprite.PlayButton;
+import ru.geekbrains.libgdx.sprite.PlayerShip;
 import ru.geekbrains.libgdx.sprite.Star;
 
-public class MenuScreen extends BaseScreen {
+public class PlayScreen extends BaseScreen {
 
-    private static final int STAR_COUNT = 256;
+    private static final int STAR_COUNT = 64;
 
     private TextureAtlas atlas;
 
     private Texture bg;
     private Background background;
     private Star[] stars;
-    private ExitButton exitButton;
-    private PlayButton playButton;
 
-    private final Game game;
+    private PlayerShip playerShip;
 
-    public MenuScreen(Game game) {
-        this.game = game;
-    }
+    private GoLeftButton goLeftButton;
 
     @Override
     public void show() {
         super.show();
-        atlas = new TextureAtlas("textures\\menuAtlas.tpack");
+        atlas = new TextureAtlas("textures\\mainAtlas.tpack");
 
         bg = new Texture("textures\\bg.png");
         background = new Background(bg);
@@ -41,14 +37,15 @@ public class MenuScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
-        exitButton = new ExitButton(atlas);
-        playButton = new PlayButton(atlas, game);
+        playerShip = new PlayerShip(atlas);
+        goLeftButton = new GoLeftButton(atlas);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        checkCollision();
         draw();
     }
 
@@ -58,8 +55,8 @@ public class MenuScreen extends BaseScreen {
         for (Star star : stars) {
             star.resize(worldBounds);
         }
-        exitButton.resize(worldBounds);
-        playButton.resize(worldBounds);
+        playerShip.resize(worldBounds);
+        goLeftButton.resize(worldBounds);
     }
 
     @Override
@@ -70,16 +67,23 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
+    public boolean keyDown(int keycode) {
+        return super.keyDown(keycode);
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return super.keyUp(keycode);
+    }
+
+    @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        exitButton.touchDown(touch, pointer, button);
-        playButton.touchDown(touch, pointer, button);
+        goLeftButton.touchDown(touch, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        exitButton.touchUp(touch, pointer, button);
-        playButton.touchUp(touch, pointer, button);
         return false;
     }
 
@@ -87,6 +91,11 @@ public class MenuScreen extends BaseScreen {
         for (Star star : stars) {
             star.update(delta);
         }
+
+    }
+
+    private void checkCollision() {
+
     }
 
     private void draw() {
@@ -95,8 +104,8 @@ public class MenuScreen extends BaseScreen {
         for (Star star : stars) {
             star.draw(batch);
         }
-        exitButton.draw(batch);
-        playButton.draw(batch);
+        playerShip.draw(batch);
+        goLeftButton.draw(batch);
         batch.end();
     }
 }

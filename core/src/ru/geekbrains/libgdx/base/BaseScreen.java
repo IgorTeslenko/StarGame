@@ -105,7 +105,7 @@ public class BaseScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        System.out.printf("X: %f, Y: %f%n", touch.x,touch.y);
+//        System.out.printf("X: %f, Y: %f%n", touch.x,touch.y);
         return false;
     }
 
@@ -117,7 +117,7 @@ public class BaseScreen implements Screen, InputProcessor {
     }
 
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        System.out.printf("X: %f, Y: %f%n", touch.x,touch.y);
+//        System.out.printf("X: %f, Y: %f%n", touch.x,touch.y);
         return false;
     }
 
@@ -129,7 +129,7 @@ public class BaseScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDragged(Vector2 touch, int pointer) {
-        System.out.printf("X: %f, Y: %f%n", touch.x,touch.y);
+//        System.out.printf("X: %f, Y: %f%n", touch.x,touch.y);
         return false;
     }
 

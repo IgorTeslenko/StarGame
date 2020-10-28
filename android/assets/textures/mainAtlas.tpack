@@ -73,3 +73,10 @@ star
   orig: 11, 10
   offset: 0, 0
   index: -1
+emptySprite
+  rotate: false
+  xy: 1306, 95
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
