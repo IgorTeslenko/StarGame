@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.libgdx.base.BaseScreen;
-import ru.geekbrains.libgdx.controls.GoLeftButton;
 import ru.geekbrains.libgdx.math.Rect;
+import ru.geekbrains.libgdx.pool.BulletPool;
 import ru.geekbrains.libgdx.sprite.Background;
 import ru.geekbrains.libgdx.sprite.PlayerShip;
 import ru.geekbrains.libgdx.sprite.Star;
@@ -22,8 +22,7 @@ public class PlayScreen extends BaseScreen {
     private Star[] stars;
 
     private PlayerShip playerShip;
-
-    private GoLeftButton goLeftButton;
+    private BulletPool bulletPool;
 
     @Override
     public void show() {
@@ -36,8 +35,8 @@ public class PlayScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
-        playerShip = new PlayerShip(atlas);
-        goLeftButton = new GoLeftButton(atlas);
+        bulletPool = new BulletPool();
+        playerShip = new PlayerShip(atlas, bulletPool);
     }
 
     @Override
@@ -45,6 +44,7 @@ public class PlayScreen extends BaseScreen {
         super.render(delta);
         update(delta);
         checkCollision();
+        freeAllDestroyed();
         draw();
     }
 
@@ -55,13 +55,13 @@ public class PlayScreen extends BaseScreen {
             star.resize(worldBounds);
         }
         playerShip.resize(worldBounds);
-        goLeftButton.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
         batch.dispose();
     }
 
@@ -93,11 +93,16 @@ public class PlayScreen extends BaseScreen {
         for (Star star : stars) {
             star.update(delta);
         }
+        bulletPool.updateActiveSprites(delta);
         playerShip.update(delta);
     }
 
     private void checkCollision() {
 
+    }
+
+    private void freeAllDestroyed () {
+        bulletPool.freeAllDestroyedActiveSprites();
     }
 
     private void draw() {
@@ -106,8 +111,8 @@ public class PlayScreen extends BaseScreen {
         for (Star star : stars) {
             star.draw(batch);
         }
+        bulletPool.drawActiveSprites(batch);
         playerShip.draw(batch);
-        goLeftButton.draw(batch);
         batch.end();
     }
 }
