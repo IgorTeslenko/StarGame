@@ -25,6 +25,7 @@ public class EnemyShip extends Ship {
         super.update(delta);
         if (getBottom() < worldBounds.getBottom()) {
             destroy();
+            reloadTimer = 0;
         }
         if (getTop() < worldBounds.getTop() - MARGIN) {
             this.v.set(settings.getV0());
