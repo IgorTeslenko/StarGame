@@ -1,6 +1,8 @@
 package ru.geekbrains.libgdx.sprite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -14,10 +16,12 @@ public class PlayerShip extends Sprite {
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
+    private static final float RELOAD_INTERVAL = 0.2f;
 
     private Rect worldBounds;
     private BulletPool bulletPool;
     private TextureRegion bulletRegion;
+    private Sound bulletSound;
 
     private final Vector2 v = new Vector2();
     private final Vector2 v0 = new Vector2(0.5f, 0);
@@ -30,11 +34,13 @@ public class PlayerShip extends Sprite {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
+    private float reloadTimer;
 
     public PlayerShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
+        this.bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\laser.wav"));
     }
 
     @Override
@@ -93,6 +99,12 @@ public class PlayerShip extends Sprite {
             stop();
         }
 
+        reloadTimer += delta;
+        if (reloadTimer >= RELOAD_INTERVAL) {
+            reloadTimer = 0;
+            shoot();
+        }
+
 //        if (getLeft() > worldBounds.getRight()) {
 //            setRight(worldBounds.getLeft());
 //        } else if (getRight() < worldBounds.getLeft()) {
@@ -143,6 +155,10 @@ public class PlayerShip extends Sprite {
         return false;
     }
 
+    public void dispose() {
+        bulletSound.dispose();
+    }
+
     private void moveRight() {
         v.set(v0);
     }
@@ -159,5 +175,6 @@ public class PlayerShip extends Sprite {
         Bullet bullet = bulletPool.obtain();
         bulletPos.set(pos.x, getTop());
         bullet.set(this, bulletRegion, bulletPos, this.bulletV, worldBounds, 1, 0.02f);
+        bulletSound.play();
     }
 }
