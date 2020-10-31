@@ -2,7 +2,6 @@ package ru.geekbrains.libgdx.screen;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.libgdx.base.BaseScreen;
@@ -68,22 +67,25 @@ public class PlayScreen extends BaseScreen {
 
     @Override
     public boolean keyDown(int keycode) {
-        return super.keyDown(keycode);
+        playerShip.keyDown(keycode);
+        return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        return super.keyUp(keycode);
+        playerShip.keyUp(keycode);
+        return false;
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        goLeftButton.touchDown(touch, pointer, button);
+        playerShip.touchDown(touch, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
+        playerShip.touchUp(touch, pointer, button);
         return false;
     }
 
@@ -91,7 +93,7 @@ public class PlayScreen extends BaseScreen {
         for (Star star : stars) {
             star.update(delta);
         }
-
+        playerShip.update(delta);
     }
 
     private void checkCollision() {
