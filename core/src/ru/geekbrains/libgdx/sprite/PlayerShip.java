@@ -2,31 +2,21 @@ package ru.geekbrains.libgdx.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.libgdx.base.Sprite;
+import ru.geekbrains.libgdx.base.Ship;
 import ru.geekbrains.libgdx.math.Rect;
 import ru.geekbrains.libgdx.pool.BulletPool;
 
-public class PlayerShip extends Sprite {
+public class PlayerShip extends Ship {
 
     private static final float SHIP_HEIGHT = 0.15f;
     private static final float MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
     private static final float RELOAD_INTERVAL = 0.2f;
-
-    private Rect worldBounds;
-    private BulletPool bulletPool;
-    private TextureRegion bulletRegion;
-    private Sound bulletSound;
-
-    private final Vector2 v = new Vector2();
-    private final Vector2 v0 = new Vector2(0.5f, 0);
-    private final Vector2 bulletV = new Vector2(0, 0.5f);
-    private final Vector2 bulletPos = new Vector2();
+    private static final int HP = 100;
 
     private boolean pressedLeft;
     private boolean pressedRight;
@@ -34,13 +24,20 @@ public class PlayerShip extends Sprite {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
-    private float reloadTimer;
+    public Rectangle colPlayer;
 
     public PlayerShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\laser.wav"));
+        this.bulletHeight = 0.01f;
+        this.bulletV.set(0, 0.5f);
+        this.damage = 1;
+        this.v0.set(0.5f, 0);
+        this.reloadInterval = RELOAD_INTERVAL;
+        this.hp = HP;
+        colPlayer = new Rectangle(this.getBottom(), this.getLeft(), this.getWidth(), this.getHeight());
     }
 
     @Override
@@ -53,13 +50,13 @@ public class PlayerShip extends Sprite {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         if (touch.x < worldBounds.pos.x) {
-            if (leftPointer != INVALID_POINTER){
+            if (leftPointer != INVALID_POINTER) {
                 return false;
             }
             leftPointer = pointer;
             moveLeft();
         } else {
-            if (rightPointer != INVALID_POINTER){
+            if (rightPointer != INVALID_POINTER) {
                 return false;
             }
             rightPointer = pointer;
@@ -90,7 +87,8 @@ public class PlayerShip extends Sprite {
 
     @Override
     public void update(float delta) {
-        pos.mulAdd(v, delta);
+        bulletPos.set(pos.x, getTop());
+        super.update(delta);
         if (getRight() > worldBounds.getRight()) {
             setRight(worldBounds.getRight());
             stop();
@@ -98,13 +96,6 @@ public class PlayerShip extends Sprite {
             setLeft(worldBounds.getLeft());
             stop();
         }
-
-        reloadTimer += delta;
-        if (reloadTimer >= RELOAD_INTERVAL) {
-            reloadTimer = 0;
-            shoot();
-        }
-
 //        if (getLeft() > worldBounds.getRight()) {
 //            setRight(worldBounds.getLeft());
 //        } else if (getRight() < worldBounds.getLeft()) {
@@ -123,9 +114,6 @@ public class PlayerShip extends Sprite {
             case Input.Keys.RIGHT:
                 pressedRight = true;
                 moveRight();
-                break;
-            case Input.Keys.SPACE:
-                shoot();
                 break;
         }
         return false;
@@ -171,10 +159,4 @@ public class PlayerShip extends Sprite {
         v.setZero();
     }
 
-    private void shoot() {
-        Bullet bullet = bulletPool.obtain();
-        bulletPos.set(pos.x, getTop());
-        bullet.set(this, bulletRegion, bulletPos, this.bulletV, worldBounds, 1, 0.02f);
-        bulletSound.play();
-    }
 }
