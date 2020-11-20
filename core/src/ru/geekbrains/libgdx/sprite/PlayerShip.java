@@ -17,7 +17,7 @@ public class PlayerShip extends Ship {
     private static final float MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
     private static final float RELOAD_INTERVAL = 0.2f;
-    private static final int HP = 10;
+    private static final int HP = 100;
 
     private boolean pressedLeft;
     private boolean pressedRight;

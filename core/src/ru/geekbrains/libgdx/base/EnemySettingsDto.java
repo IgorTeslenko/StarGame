@@ -72,6 +72,8 @@ public abstract class EnemySettingsDto {
         this.damage = damage;
     }
 
+    public abstract void setDamageForLevel(int level);
+
     public float getReloadInterval() {
         return reloadInterval;
     }

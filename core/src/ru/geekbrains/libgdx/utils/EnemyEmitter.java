@@ -21,8 +21,10 @@ public class EnemyEmitter {
     private float generateTimer;
 
     private final EnemySettingsDto enemySmallSettingsDto;
-    private final EnemyMediumSettingsDto enemyMediumSettingsDto;
-    private final EnemyBigSettingsDto enemyBigSettingsDto;
+    private final EnemySettingsDto enemyMediumSettingsDto;
+    private final EnemySettingsDto enemyBigSettingsDto;
+
+    private int level = 1;
 
     public EnemyEmitter(Rect worldBounds, EnemyShipPool enemyShipPool, Sound bulletSound, TextureAtlas atlas) {
         this.worldBounds = worldBounds;
@@ -32,18 +34,25 @@ public class EnemyEmitter {
         enemyBigSettingsDto = new EnemyBigSettingsDto(atlas, bulletSound);
     }
 
-    public void generate(float delta) {
+    public int getLevel() {
+        return level;
+    }
+
+    public void generate(float delta, int frags) {
+        level = frags / 10 + 1;
         generateTimer += delta;
-        if (generateTimer >= GENERATE_INTERVAL) {
+        if (generateTimer >= GENERATE_INTERVAL - (float)level * 0.5f) {
             generateTimer = 0;
             EnemyShip enemyShip = enemyShipPool.obtain();
             float type = (float) Math.random();
-//            System.out.println(type);
             if (type < 0.5f) {
+                enemySmallSettingsDto.setDamageForLevel(level);
                 enemyShip.set(enemySmallSettingsDto);
             } else if (type < 0.8f) {
+                enemyMediumSettingsDto.setDamageForLevel(level);
                 enemyShip.set(enemyMediumSettingsDto);
             } else {
+                enemyBigSettingsDto.setDamageForLevel(level);
                 enemyShip.set(enemyBigSettingsDto);
             }
             enemyShip.pos.x = Rnd.nextFloat(worldBounds.getLeft() + enemyShip.getHalfWidth(), worldBounds.getRight() - enemyShip.getHalfWidth());
